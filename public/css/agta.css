@@ -1,0 +1,396 @@
+body, html
+{
+	font-family:"Arial", sans-serif;
+	font-size:1em;
+	background-color:#fff;
+	width:100%;
+	height:100%;
+	overflow:hidden;
+	color: #777;
+}
+
+label
+{
+	font-size: .75em;
+}
+
+input[type='text'], select, option
+{
+	height:2.5em
+	width:100%;
+}
+
+.remember-check
+{
+	width:1.5em;
+	height:1.5em;
+	float:left;
+}
+.remember-label
+{
+	padding-left:.5em;
+}
+.remember-holder
+{
+	padding-top:1em;
+	padding-bottom:1em;
+}
+
+span.optional
+{
+	color: rgb(28, 184, 65); /* this is a green */
+	text-transform: uppercase;
+	font-size: .75em;
+}
+
+.display-none
+{
+	display:none;
+}
+
+.menu
+{
+	width:160px;
+}
+
+a.menu-inactive 
+{
+	color: #ff0000;
+	text-decoration: line-through;
+}
+
+.valign-bottom
+{
+	vertical-align: bottom;	
+}
+
+.halign-right
+{
+	text-align: right;
+}
+
+.hold,
+.group,
+.expire
+{
+	display: table;
+	width: 100%;
+}
+
+.third
+{
+	width: 33.333%;
+	display: table-cell;
+}
+
+.half
+{
+	width: 50%;
+	display: table-cell;
+}
+
+#ViewMap
+{
+	width:100%;
+	height:100%;
+	position:absolute;
+}
+
+.ViewLogin,
+.ViewAbout,
+.ViewNotify,
+.ViewContact,
+.ViewFind,
+.ViewPost,
+.ViewDetail,
+.ViewEdit
+{
+	padding: .5em;
+}
+
+.ViewAbout
+{
+	height:50%:
+}
+
+.ViewAbout .copy
+{
+	height:10em;
+	overflow-y: scroll;
+	padding: 1em 0;
+	margin-bottom: 1em;
+}
+
+.ViewPost
+{
+	height:100%;
+}
+
+.ViewPost .forms,
+.ViewEdit .forms
+{
+	overflow-y: scroll;
+	height: 15em;
+	padding-right:1em;
+	margin-bottom:1em;
+}
+
+/*.ViewEdit*/
+.ViewEdit .meeting_name,
+.ViewEdit .meeting_type,
+.ViewEdit .street_number,
+.ViewEdit .street_name,
+.ViewEdit .street_type,
+.ViewEdit .street_direction,
+.ViewEdit .meeting_province,
+.ViewEdit .postal,
+.ViewEdit .unit_number,
+.ViewEdit .city,
+.ViewEdit .meeting_building,
+.ViewEdit .meeting_day,
+.ViewEdit .meeting_hour,
+.ViewEdit .meeting_minute,
+.ViewEdit .meeting_period,
+.ViewEdit .street,
+.ViewEdit .city,
+.ViewEdit .meeting_province,
+.ViewEdit .number,
+/*.ViewPost*/
+.ViewPost .meeting_name,
+.ViewPost .meeting_type,
+.ViewPost .street_number,
+.ViewPost .street_name,
+.ViewPost .street_type,
+.ViewPost .street_direction,
+.ViewPost .meeting_province,
+.ViewPost .postal,
+.ViewPost .unit_number,
+.ViewPost .city,
+.ViewPost .meeting_building,
+.ViewPost .meeting_day,
+.ViewPost .meeting_hour,
+.ViewPost .meeting_minute,
+.ViewPost .meeting_period,
+/*.ViewFind*/
+.ViewFind .street,
+.ViewFind .city,
+.ViewFind .meeting_province,
+.ViewFind .number,
+/*.ViewContact*/
+.ViewContact .email,
+.ViewContact .message,
+/*.ViewLogin*/
+.ViewLogin .email,
+.ViewLogin .password
+{
+	width: 100%;
+}
+
+.ViewContact .message
+{
+	height:5em;
+	word-break: break-word;
+}
+
+.ViewDetail .title
+{
+	font-weight: bold;
+	font-size: .75em;
+}
+
+.ViewDetail .info
+{
+	font-size: 1em;
+	margin-bottom: .75em;
+}
+
+#ViewLogin,
+#ViewAbout,
+#ViewContact,
+#ViewFind,
+#ViewPost,
+#ViewDetail,
+#ViewDirection,
+#ViewPreload,
+#ViewEdit
+{
+	width:100%;
+	bottom:0em;
+	position:absolute;
+	background-color:#fff;
+}
+
+#ViewMenu
+{
+	right:2px;
+	bottom:0em;
+	position:absolute;
+}
+
+#ViewNotify
+{
+	width:100%;
+	position:absolute;
+	background-color:#3366CC;
+	font-size:1em;
+	top: -1em;
+	color:#fff;
+	font-weight: bold;
+	text-align:center;
+}
+
+#ViewPreload
+{
+	width:100%;
+	height:100%;
+	background-color:inherit;
+}
+
+.ViewPreload
+{
+	background-color:#fff;
+	width:100%;
+	height:100%;
+	opacity: .75;
+}
+
+.ViewPreload .preload-wrap
+{
+	position:absolute;
+	display:block;
+	left:50%;
+	top:50%;
+}
+
+.ViewPreload .preload-holder
+{
+	position:relative;
+	margin:0;
+	margin-left:-17px;
+	margin-top:-17px;
+}
+
+.preload-wrap
+{
+	width: 34px;
+	height: 34px;
+	display: inline-block;
+	position: relative;
+}
+
+.preload-holder
+{
+	width: 34px;
+	height: 34px;
+	position: absolute;
+	margin-top: .75em;
+}
+
+.round-preload
+{
+	background-image: url( "../img/round-preload.gif" );
+	background-repeat: no-repeat;
+	background-position: center;
+}
+
+.button-success,
+.button-error,
+.button-warning,
+.button-secondary
+{
+	color: white;
+	border-radius: 4px;
+	text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+}
+
+.button-success
+{
+	background: rgb(28, 184, 65); /* this is a green */
+}
+
+.button-error
+{
+	background: rgb(202, 60, 60); /* this is a maroon */
+}
+
+.button-warning
+{
+	background: rgb(223, 117, 20); /* this is an orange */
+}
+
+.button-secondary
+{
+	background: rgb(66, 184, 221); /* this is a light blue */
+}
+
+.direction-open:after
+{
+	content: "↓";
+}
+.direction-close:after
+{
+	content: "↑";
+}
+
+.ViewDirection
+{
+	padding: 0 .5em;
+}
+
+.ViewDirection .controls
+{
+	padding-bottom:.5em;
+	padding-top:.5em;
+	height:1.75em;
+}
+
+.GoogleDirections
+{
+	overflow-y: scroll;
+	height: 12em;
+	font-size:.75em;
+	padding-right: 1.5em;
+}
+
+.GoogleDirections #adp-placemark
+{
+	margin-top:0;
+}
+.GoogleDirections .adp-legal
+{
+	margin-bottom:1em;
+}
+
+.marker
+{
+	width: 60px !important; /* override default google marker size */
+	height: 46px !important; /* override default google marker size */
+}
+
+.marker-round
+{
+	background-image: url( "../img/marker_round.png" );
+}
+
+.marker-triangle
+{
+	background-image: url( "../img/marker_triangle.png" );
+}
+
+.pure-button
+{
+	padding: .25em .5em;
+}
+
+#ViewMap{ z-index: 1; }
+#ViewMenu{ z-index: 1; }
+#ViewLogin{	z-index: 1; }
+#ViewContact{ z-index: 1; }
+#ViewAbout{	z-index: 1; }
+#ViewNotify{ z-index: 1; }
+#ViewDetail{ z-index: 1; }
+#ViewDirection{ z-index: 1; }
+#ViewFind{ z-index: 1; }
+#ViewPost{ z-index: 1; }
+#ViewPreload{ z-index: 1; }
+#ViewEdit{ z-index: 1; }

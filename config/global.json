@@ -1,0 +1,14 @@
+{
+    "applications": {
+        "_default": {
+            "link": "agta"
+        }, 
+        "agta": {
+            "applicationId": "teq91fTZpqE1EEpD23PL6hSKKzdsPD7bGzmNKSrR", 
+            "masterKey": "Pckf5CeUaA1A3ORtIItVC1LmrxqJ9JXDyvUMbpJx"
+        }
+    }, 
+    "global": {
+        "parseVersion": "1.3.0"
+    }
+}

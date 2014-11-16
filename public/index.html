@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    
+	<head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+		<link rel="shortcut icon" href="favicon.ico?v=1" />
+        <link rel="stylesheet" href="css/normalize.css">
+        <link rel="stylesheet" href="css/main.css">
+		<link rel="stylesheet" href="//yui.yahooapis.com/pure/0.5.0/pure-min.css">
+		<link rel="stylesheet" href="css/agta.css">
+		
+		<script src="js/vendor/logger.min.js"></script>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/datejs/1.0/date.min.js"></script>
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-mousewheel/3.1.11/jquery.mousewheel.min.js"></script>
+		<script src="js/vendor/r.js"></script>
+		<script src="js/vendor/modernizr-2.6.2.min.js"></script>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.13.1/TweenMax.min.js"></script>
+		<script src="https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyCiJfKhXur8Ca7CZsvyFjPxW8X5ab3wRO0&language=en" type="text/javascript"></script>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore.js"></script>
+		<script src="//parse.com/downloads/javascript/parse-1.3.0.js"></script>
+		
+		<script id="TemplateViewDetail" type="text/template">
+			<div class="ViewDetail">
+				<div class="hold">
+					<div class="half">
+						<div class="title">Meeting name:</div>
+						<div class="info"><%= meeting_name %></div>
+						<div class="title">Meeting type:</div>
+						<div class="info"><%= meeting_type %></div>
+					</div>
+					<div class="half">
+						<div class="title">Meeting building:</div>
+						<div class="info"><%= meeting_building %></div>
+						<div class="title">Meeting start:</div>
+						<div class="info"><%= meeting_time %></div>
+					</div>
+				</div>
+				<div class="controls">
+					<button class="walking pure-button pure-button-primary button-warning">Walking</button>
+					<button class="driving pure-button pure-button-primary button-secondary">Driving</button>
+					<% if( meeting_claimable ) { %>
+						<% if( meeting_claimed ) { %>
+							<button class="edit pure-button pure-button-primary button-error">Edit</button>
+						<% }else{ %>
+							<button class="claim pure-button pure-button-primary button-error">Claim</button>
+						<% } %>
+					<% } %>
+					<button class="cancel pure-button">Cancel</button>
+				</div>
+			</div>
+		</script>
+		
+		<script id="TemplateViewLogin" type="text/template">
+			<div class="ViewLogin">
+				<form class="pure-form pure-form-stacked">
+					<fieldset>
+						<legend>Please login below</legend>
+						<label for="email">Email</label>
+						<input class="email" type="email" placeholder="Email">
+						<label for="password">Password</label>
+						<input class="password" type="password" placeholder="Password">
+						<div class="hold remember-holder">
+							<input class="remember-check" type="checkbox">
+							<span class="remember-label">Remember me</span>
+						</div>
+					</fieldset>
+				</form>
+				<div class="controls">
+					<button class="submit pure-button pure-button-primary">Sign in</button>
+					<button class="cancel pure-button">Cancel</button>
+				</div>
+			</div>
+		</script>
+		
+		<script id="TemplateViewFind" type="text/template">
+			<div class="ViewFind">
+				<form class="pure-form pure-form-stacked">
+					<fieldset>
+						<legend>Enter your location</legend>
+						
+						<label for="street">Street</label>
+						<input minlength="1" class="street" type="text" placeholder="234 Eglinton Ave. East" required>
+						
+						<label for="city">City</label>
+						<input minlength="1" class="city" type="text" placeholder="Toronto" required>
+						
+						<div class="hold">
+							<label for="meeting_province">Province</label>
+								<select name="meeting_province" class="meeting_province" required>
+									<option value="">Province</option>
+									<% for( var i=0; i<meeting_province.length; i++ ){ %>
+											<option value="<%= meeting_province[ i ].id %>">
+												<%= meeting_province[ i ].get("name").toCapitalCase( ) %>
+											</option>
+									<% } %>
+								</select>
+						</div>
+						
+					</fieldset>
+				</form>
+				<div class="controls">
+					<button class="submit pure-button pure-button-primary">Find</button>
+					<button class="cancel pure-button">Close</button>
+					<button class="detect button-success pure-button">Auto-detect</button>
+					<div class="preload-wrap">
+						<div class="preload-holder">
+					</div>
+				</div>
+			</div>
+		</script>
+		
+		<script id="TemplateViewPost" type="text/template">
+		
+			<legend>Create a meeting</legend>
+				
+			<div class="ViewPost">
+				
+				<form class="pure-form pure-form-stacked" target="hidden-iframe" action="iframe.html">
+				
+				<div class="forms">
+					
+						<fieldset>
+							
+							<label for="meeting_name">Meeting name</label>
+							<input minlength="1" name="meeting_name" class="meeting_name" type="text" placeholder="Local Fellowship Meeting" required>
+							
+							<label for="meeting_name">Building name</label>
+							<input minlength="1" name="meeting_building" class="meeting_building" type="text" placeholder="Little Denmark Restaurant" required>
+							
+							<label for="meeting_type">Meeting type</label>
+							<select name="meeting_type" class="meeting_type" required>
+								<option value="">Select Type</option>
+								<% for( var i=0; i<meeting_type.length; i++ ){ %>
+									<option value="<%= meeting_type[ i ].id %>">
+										<%= meeting_type[ i ].get("name").toCapitalCase( ) %>
+									</option>
+								<% } %>
+							</select>
+							
+							<div class="hold">
+								<div class="half">
+									<label for="street_number">Street no.</label>
+									<input name="street_number" minlength="1" maxlength="25" class="street_number" type="text" placeholder="123" required>
+								</div>
+								<div class="half">
+									<label for="unit_number">Unit no. <span class="optional">[ optional ]</span></label>
+									<input name="unit_number" minlength="1" maxlength="25" class="unit_number" type="text" placeholder="17B / Second Floor">
+								</div>
+							</div>
+							
+							<div class="hold">
+								<div class="half">
+									<label for="street_name">Street Name</label>
+									<input name="street_name" minlength="1" maxlength="50" class="street_name" type="text" placeholder="Eglinton" required>
+								</div>
+							</div>
+							
+							<div class="hold">
+								<div class="half">
+									<label for="street_type">Street Type</label>
+									<select name="street_type" class="street_type">
+										<option value="">Select Type</option>
+										<% for( var i=0; i<street_type.length; i++ ){ %>
+											<option value="<%= street_type[ i ].id %>">
+												<%= street_type[ i ].get("name").toCapitalCase( ) %>
+											</option>
+										<% } %>
+									</select>
+								</div>
+								<div class="half">
+									<label for="street_direction">Street Direction <span class="optional">[ optional ]</span></label>
+									<select name="street_direction" class="street_direction">
+										<option value="">Select Direction</option>
+										<% for( var i=0; i<street_direction.length; i++ ){ %>
+											<option value="<%= street_direction[ i ].id %>">
+												<%= street_direction[ i ].get("name").toCapitalCase( ) %>
+											</option>
+										<% } %>
+									</select>
+								</div>
+							</div>
+							
+							<div class="hold">
+								<div class="half">
+									<label for="city">City</label>
+									<input name="city" minlength="1" maxlength="25" class="city" type="text" placeholder="Toronto" required>
+								</div>
+								<div class="half">
+									<label for="postal">Postal <span class="optional">[ optional ]</span></label>
+									<input name="postal" minlength="1" maxlength="50" class="postal" type="text" placeholder="m2m2m2">
+								</div>
+							</div>
+							
+							<div class="hold">
+								<label for="meeting_province">Province</label>
+								<select name="meeting_province" class="meeting_province" required>
+									<option value="">Province</option>
+									<% for( var i=0; i<meeting_province.length; i++ ){ %>
+											<option value="<%= meeting_province[ i ].id %>">
+												<%= meeting_province[ i ].get("name").toCapitalCase( ) %>
+											</option>
+									<% } %>
+								</select>
+							</div>
+							
+							<div class="hold">
+								<label for="meeting_day">Day</label>
+								<select name="meeting_day" class="meeting_day" required>
+									<option value="">Select day</option>
+									<% for( var i=0; i<meeting_day.length; i++ ){ %>
+										<option value="<%= meeting_day[ i ].id %>">
+											<%=  String( meeting_day[ i ].get("name") ).toCapitalCase( ) %>
+										</option>
+									<% } %>
+								</select>
+							</div>
+							
+							<div class="hold">Meeting Start:</div>
+							
+							<div class="hold">
+								<div class="third">
+									<label for="meeting_hour">Hour</label>
+									<select name="meeting_hour" class="meeting_hour" required>
+										<option value="">--</option>
+										<% for( var i=0; i<meeting_hour.length; i++ ){ %>
+											<option value="<%= meeting_hour[ i ].get("name") %>">
+												<%= meeting_hour[ i ].get("name") %>
+											</option>
+										<% } %>
+									</select>
+								</div>
+								<div class="third">
+									<label for="meeting_minute">Minute</label>
+									<select name="meeting_minute" class="meeting_minute" required>
+										<option value="">--</option>
+										<% for( var i=0; i<meeting_minute.length; i++ ){ %>
+											<option value="<%= meeting_minute[ i ].get("name") %>">
+												<%= meeting_minute[ i ].get("name") %>
+											</option>
+										<% } %>
+									</select>
+								</div>
+								<div class="third">
+									<label for="meeting_period">Period</label>
+									<select name="meeting_period" class="meeting_period" required>
+										<option value="">--</option>
+										<% for( var i=0; i<meeting_period.length; i++ ){ %>
+											<option value="<%= meeting_period[ i ].id %>">
+												<%= String( meeting_period[ i ].get("name") ).toUpperCase( ) %>
+											</option>
+										<% } %>
+									</select>
+								</div>
+							</div>
+							
+						</fieldset>
+						
+				</div>
+				
+				<div class="controls">
+					<button class="submit pure-button pure-button-primary">Post</button>
+					<button class="cancel pure-button">Close</button>
+				</div>
+				
+				</form>
+				
+			</div>
+			
+		</script>
+		
+		<script id="TemplateViewEdit" type="text/template">
+			<div class="ViewEdit">
+				<legend>Edit meeting</legend>
+				<form class="pure-form pure-form-stacked" target="hidden-iframe" action="iframe.html">
+				
+				<div class="forms">
+					
+						<fieldset>
+							
+							<label for="meeting_name">Meeting name</label>
+							<input minlength="1" name="meeting_name" class="meeting_name" type="text" placeholder="Local Fellowship Meeting" required>
+							
+							<label for="meeting_name">Building name</label>
+							<input minlength="1" name="meeting_building" class="meeting_building" type="text" placeholder="Little Denmark Restaurant" required>
+							
+							<label for="meeting_type">Meeting type</label>
+							<select name="meeting_type" class="meeting_type" required>
+								<option value="">Select Type</option>
+								<% for( var i=0; i<meeting_type.length; i++ ){ %>
+									<option value="<%= meeting_type[ i ].id %>">
+										<%= meeting_type[ i ].get("name").toCapitalCase( ) %>
+									</option>
+								<% } %>
+							</select>
+							
+							<div class="hold">
+								<div class="half">
+									<label for="street_number">Street no.</label>
+									<input name="street_number" minlength="1" maxlength="25" class="street_number" type="text" placeholder="123" required>
+								</div>
+								<div class="half">
+									<label for="unit_number">Unit no. <span class="optional">[ optional ]</span></label>
+									<input name="unit_number" minlength="1" maxlength="25" class="unit_number" type="text" placeholder="17B / Second Floor">
+								</div>
+							</div>
+							
+							<div class="hold">
+								<div class="half">
+									<label for="street_name">Street Name</label>
+									<input name="street_name" minlength="1" maxlength="50" class="street_name" type="text" placeholder="Eglinton" required>
+								</div>
+							</div>
+							
+							<div class="hold">
+								<div class="half">
+									<label for="street_type">Street Type</label>
+									<select name="street_type" class="street_type">
+										<option value="">Select Type</option>
+										<% for( var i=0; i<street_type.length; i++ ){ %>
+											<option value="<%= street_type[ i ].id %>">
+												<%= street_type[ i ].get("name").toCapitalCase( ) %>
+											</option>
+										<% } %>
+									</select>
+								</div>
+								<div class="half">
+									<label for="street_direction">Street Direction <span class="optional">[ optional ]</span></label>
+									<select name="street_direction" class="street_direction">
+										<option value="">Select Direction</option>
+										<% for( var i=0; i<street_direction.length; i++ ){ %>
+											<option value="<%= street_direction[ i ].id %>">
+												<%= street_direction[ i ].get("name").toCapitalCase( ) %>
+											</option>
+										<% } %>
+									</select>
+								</div>
+							</div>
+							
+							<div class="hold">
+								<div class="half">
+									<label for="city">City</label>
+									<input name="city" minlength="1" maxlength="25" class="city" type="text" placeholder="Toronto" required>
+								</div>
+								<div class="half">
+									<label for="postal">Postal <span class="optional">[ optional ]</span></label>
+									<input name="postal" minlength="1" maxlength="50" class="postal" type="text" placeholder="m2m2m2">
+								</div>
+							</div>
+							
+							<div class="hold">
+								<label for="meeting_province">Province</label>
+								<select name="meeting_province" class="meeting_province" required>
+									<option value="">Province</option>
+									<% for( var i=0; i<meeting_province.length; i++ ){ %>
+											<option value="<%= meeting_province[ i ].id %>">
+												<%= meeting_province[ i ].get("name").toCapitalCase( ) %>
+											</option>
+									<% } %>
+								</select>
+							</div>
+							
+							<div class="hold">
+								<label for="meeting_day">Day</label>
+								<select name="meeting_day" class="meeting_day" required>
+									<option value="">Select day</option>
+									<% for( var i=0; i<meeting_day.length; i++ ){ %>
+										<option value="<%= meeting_day[ i ].id %>">
+											<%=  String( meeting_day[ i ].get("name") ).toCapitalCase( ) %>
+										</option>
+									<% } %>
+								</select>
+							</div>
+							
+							<div class="hold">Meeting Start:</div>
+							
+							<div class="hold">
+								<div class="third">
+									<label for="meeting_hour">Hour</label>
+									<select name="meeting_hour" class="meeting_hour" required>
+										<option value="">--</option>
+										<% for( var i=0; i<meeting_hour.length; i++ ){ %>
+											<option value="<%= meeting_hour[ i ].get("name") %>">
+												<%= meeting_hour[ i ].get("name") %>
+											</option>
+										<% } %>
+									</select>
+								</div>
+								<div class="third">
+									<label for="meeting_minute">Minute</label>
+									<select name="meeting_minute" class="meeting_minute" required>
+										<option value="">--</option>
+										<% for( var i=0; i<meeting_minute.length; i++ ){ %>
+											<option value="<%= meeting_minute[ i ].get("name") %>">
+												<%= meeting_minute[ i ].get("name") %>
+											</option>
+										<% } %>
+									</select>
+								</div>
+								<div class="third">
+									<label for="meeting_period">Period</label>
+									<select name="meeting_period" class="meeting_period" required>
+										<option value="">--</option>
+										<% for( var i=0; i<meeting_period.length; i++ ){ %>
+											<option value="<%= meeting_period[ i ].id %>">
+												<%= String( meeting_period[ i ].get("name") ).toUpperCase( ) %>
+											</option>
+										<% } %>
+									</select>
+								</div>
+							</div>
+							
+						</fieldset>
+						
+				</div>
+				
+				<div class="controls">
+					<button class="submit pure-button pure-button-primary">Update</button>
+					<button class="cancel pure-button">Close</button>
+				</div>
+				
+				</form>
+				
+			</div>
+			
+		</script>
+		
+		<script id="TemplateViewContact" type="text/template">
+			<div class="ViewContact">
+				<form class="pure-form pure-form-stacked" target="hidden-iframe" action="iframe.html">
+					<fieldset>
+						<legend>Contact us below</legend>
+						<label for="email">Email</label>
+						<input name="contact_email" class="email" type="email" placeholder="user@email.com" required>
+						<label for="message">Message</label>
+						<input name="contact_message"  class="message" type="text" placeholder="Message..." required>
+					</fieldset>
+				
+					<div class="controls">
+						<button class="submit pure-button pure-button-primary">Send</button>
+						<button class="cancel pure-button">Cancel</button>
+					</div>
+					
+				</form>
+			</div>
+		</script>
+		
+		<script id="TemplateViewAbout" type="text/template">
+			<div class="ViewAbout">
+				<div class="info">About <%= window.location.hostname %></div>
+				<div class="copy"><%= message %></div>
+				<div class="controls">
+					<button class="cancel pure-button">Cancel</button>
+				</div>
+			</div>
+		</script>
+		
+		<script id="TemplateViewMenu" type="text/template">
+			<div class="ViewMenu">
+				<div class="pure-menu pure-menu-open">
+					<ul class="menu-header">
+						<li class="menu"><a href="#">Menu</a></li>
+					</ul>
+					<ul class="menu-items">
+						<% if( !Parse.User.current( ) ) { %>
+							<li class="login"><a href="#">Login / Register</a></li>
+						<% }else{ %>
+							<li class="logout"><a href="#">Logout</a></li>
+						<% } %>
+						<li class="find"><a href="#">Find a Meeting</a></li>
+						<li class="post"><a href="#">Post a Meeting</a></li>
+						<li class="about"><a href="#">About</a></li>
+						<li class="contact"><a href="#">Contact</a></li>
+					</ul>
+				</div>
+			</div>
+		</script>
+		
+		<script id="TemplateViewNotify" type="text/template">
+			<div class="ViewNotify">
+				<div><%= message %></div>
+			</div>
+		</script>
+		
+		<script id="TemplateViewDirection" type="text/template">
+			<div class="ViewDirection">
+				<div class="controls">
+					<button class="back pure-button">Find</button>
+					<button class="close pure-button pure-button button-error">Close</button>
+					<button class="toggle pure-button pure-button-primary">Toggle</button>
+				</div>
+				<div class="GoogleDirections">
+					<!-- inject google directions in here -->
+				</div>
+			</div>
+		</script>
+		
+		<script id="TemplateViewPreload" type="text/template">
+			<div class="ViewPreload">
+				<div class="preload-wrap">
+					<div class="preload-holder"></div>
+				</div>
+			</div>
+		</script>
+		
+		<script src="src/AGTA.js?v=1"></script>
+		
+    </head>
+	
+    <body>
+	
+        <!--[if lt IE 7]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+
+		<div id="ViewAGTA">
+			<!-- iframe: faux form submit -->
+			<iframe name="hidden-iframe" class="display-none" href="iframe.html"></iframe>
+			<!-- main view -->
+		</div>
+		
+    </body>
+	
+</html>
