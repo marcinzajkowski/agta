@@ -9,6 +9,11 @@ Parse.initialize
 	"q4myNueuHkGZXLeQuZWT4youRpwWOFQwQ4zT8tut" 
 );
 
+if( document.location.hostname.indexOf("localhost") < 0 )
+{
+	Logger.setLevel( Logger.OFF );
+}
+
 requirejs
 (
 	[
